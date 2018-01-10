@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import {Form} from "@angular/forms";
 
 @Component({
   selector: 'app-inicio',
@@ -11,5 +12,7 @@ export class InicioComponent implements OnInit {
 
   ngOnInit() {
   }
+
+
 
 }

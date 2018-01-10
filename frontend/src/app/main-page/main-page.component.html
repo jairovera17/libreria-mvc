@@ -1,0 +1,158 @@
+<br><br><br>
+<div class="container">
+
+  <div style="text-align: center">
+    <div class="btn-group" role="group" aria-label="Basic example">
+      <button type="button" class="btn btn-outline-dark" (click)="this.get_libros()">Ver Todos</button>
+      <button type="button" class="btn btn-outline-dark"  data-toggle="modal" data-target="#nuevoLibroModal">Agregar Libro</button>
+      <button type="button" class="btn btn-outline-dark"  data-toggle="modal" data-target="#exampleModal">Buscar</button>
+      <button type="button" class="btn btn-outline-dark" (click)="editar=!editar">Gestionar</button>
+    </div>
+  </div>
+
+  <br>
+  <hr>
+  <br>
+
+
+  <div *ngFor="let libro of libros" style="padding: 10px" >
+   <div class="card" >
+     <div class="card-body">
+
+       <div class="card-title" >
+
+         <div class="row">
+           <div class="col-6">
+
+             <div *ngIf="!libro.edit">
+               <h5>{{libro.titulo}}</h5>
+             </div>
+             <div *ngIf="libro.edit">
+               <input type="text" class="form-control" [(ngModel)]="libro.titulo">
+             </div>
+           </div>
+           <div *ngIf="editar" class="col-6" style="text-align: right">
+             <div class="btn-group" role="group" aria-label="Basic example">
+               <button type="button" class="btn btn-warning" (click)="libro.edit=!libro.edit">Modificar</button>
+               <button type="button" class="btn btn-danger" (click)="delete_libro(libro)">Eliminar</button>
+             </div>
+           </div>
+         </div>
+       </div>
+       <hr>
+       <div class="row">
+         <div class="col-6"><strong>Autor:</strong></div>
+
+         <div class="col-6">
+           <div *ngIf="!libro.edit">
+             {{libro.autor}}
+           </div>
+           <div *ngIf="libro.edit">
+             <input class="form-control" [(ngModel)]="libro.autor">
+           </div>
+         </div>
+
+       </div>
+       <div class="row">
+         <div class="col-6"><strong>Editorial:</strong></div>
+         <div class="col-6">
+           <div *ngIf="!libro.edit">
+             {{libro.editorial}}
+           </div>
+           <div *ngIf="libro.edit">
+             <input class="form-control" [(ngModel)]="libro.editorial">
+           </div>
+         </div>
+       </div>
+       <div class="row">
+         <div class="col-6"><strong>ISBN:</strong></div>
+         <div class="col-6">{{libro.isbn}}</div>
+       </div>
+
+       <div *ngIf="libro.edit">
+         <hr>
+         <button class="btn btn-outline-warning" (click)="update_libro(libro)">Confirmar</button>
+       </div>
+     </div>
+   </div>
+  </div>
+
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Buscar libro por título</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form (ngSubmit)="search_libros(libroForm.dato)"
+              #libroForm="ngForm"
+              novalidate>
+          <div class="form-group">
+            <input class="form-control"
+                   name="dato"
+                   placeholder="Ingresa texto del titulo que estas buscando" [(ngModel)]="libroForm.dato"
+                   >
+            <hr>
+            <button class="btn btn-outline-dark" type="submit" (click)="search_libros(libroForm.dato)" data-dismiss="modal">Buscar</button>
+          </div>
+        </form>
+
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="nuevoLibroModal" tabindex="-1" role="dialog" aria-labelledby="nuevoLibroLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="nuevoLibroLabel">Agregar nuevo libro</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form (ngSubmit)="search_libros(libroForm.dato)"
+              #libroForm="ngForm"
+              novalidate>
+          <div class="form-group">
+            <label class="col-form-label">Titulo</label>
+            <input class="form-control"
+                   name="titulo"
+                   placeholder="Ingresa el titulo del nuevo libro"
+                   [(ngModel)]="libroForm.titulo"
+
+            >
+            <label class="col-form-label">Autor</label>
+            <input class="form-control"
+                   name="autor"
+                   placeholder="Ingresa el autor del nuevo libro" [(ngModel)]="libroForm.autor"
+            >
+            <label class="col-form-label">Editorial</label>
+            <input class="form-control"
+                   name="editorial"
+                   placeholder="Ingresa la editorial del nuevo libro" [(ngModel)]="libroForm.editorial"
+            >
+            <label class="col-form-label">ISBN</label>
+            <input class="form-control"
+                   name="isbn"
+                   placeholder="Ingresa el ISBN del libro" [(ngModel)]="libroForm.isbn"
+            >
+            <hr>
+            <button class="btn btn-outline-dark" type="submit" (click)="create_libro(libroForm)" data-dismiss="modal">Agregar</button>
+          </div>
+        </form>
+
+
+      </div>
+    </div>
+  </div>
+</div>
