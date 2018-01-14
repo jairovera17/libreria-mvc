@@ -5,11 +5,14 @@
  * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
  */
 
+var operacion = ['CREATE','READ','UPDATE','DELETE'];
+var resultados = ['EXITOSA','ERROR'];
+
 module.exports = {
 
   create_libro: function (req, res) {
     //Crea libro, no se admiten ISBN repetidos
-   var params = req.allParams()
+   var params = req.allParams();
    Libro.create({
      titulo: params.titulo,
      autor: params.autor,
@@ -17,26 +20,36 @@ module.exports = {
      isbn: params.isbn
    }).exec(function (err, resultado) {
      if(err)
-       return res.badRequest()
+       return res.badRequest();
      else return res.json(resultado)
    })
   },
 
   read_libro: function (req, res) {
     //Busca por titulo 'parecido'
-    var params = req.allParams()
+    var log = '\n'+operacion[1];
+    var tiempo_init = new Date;
+    var params = req.allParams();
     Libro.find({
         titulo: {'contains': params.titulo}
     }).exec(function (err, resultado) {
-      if(err)
-        return res.badRequest()
-      else return res.json(resultado)
+      var tiempo_end = new Date;
+      log+='\n\ttiempo_inicio    => '+tiempo_init
+           +'\n\ttiempo_fin       => '+tiempo_end
+           +'\n\ttiempo_total (ms)=> '+(tiempo_end-tiempo_init)
+      sails.log.info(log);
+      if(err){
+        return res.badRequest();
+      }
+      else {
+        return res.json(resultado)
+      }
     })
   },
 
   update_libro: function (req, res) {
     //Modifica un libro por isbn
-    var params = req.allParams()
+    var params = req.allParams();
     Libro.update({
       isbn:params.isbn
     },{
@@ -45,7 +58,7 @@ module.exports = {
       editorial:params.editorial
     }).exec(function (err, resultado) {
       if(err)
-        return res.badRequest()
+        return res.badRequest();
       else
         return res.json(resultado)
     })
@@ -53,12 +66,12 @@ module.exports = {
 
   delete_libro: function (req, res) {
     //Elimina un libro por isbn
-    var params = req.allParams()
+    var params = req.allParams();
     Libro.destroy({
       isbn: params.isbn
     }).exec(function (err, resultado) {
       if(err)
-        return res.badRequest()
+        return res.badRequest();
       else return res.json(resultado)
     })
 
