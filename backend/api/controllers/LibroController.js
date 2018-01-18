@@ -8,6 +8,9 @@
 var operacion = ['CREATE','READ','UPDATE','DELETE'];
 var resultados = ['EXITOSA','ERROR'];
 
+const exec = require('child_process').exec;
+const fs = require('fs');
+
 function loggear(tiempo_init,tiempo_end,operacion_index){
 
   var tiempo_exec = tiempo_end - tiempo_init;
@@ -15,8 +18,13 @@ function loggear(tiempo_init,tiempo_end,operacion_index){
   log+='\n\ttiempo_inicio    => '+tiempo_init+' '+tiempo_init.getMilliseconds()
   +'\n\ttiempo_fin       => '+tiempo_end+' '+tiempo_end.getMilliseconds()
   +'\n\ttiempo_total (ms)=> '+(tiempo_end-tiempo_init);
-  sails.log.info(log);
-
+  log+='\n';
+  var instrumentos = exec('free && uptime && df -h',(error, stdout, stderr)=>{
+    fs.appendFile('logs_data.log',`${log}
+    ${stdout}`, function(err){
+      if(err) throw err;
+    });
+  });
 }
 
 module.exports = {
