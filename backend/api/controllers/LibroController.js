@@ -8,11 +8,21 @@
 var operacion = ['CREATE','READ','UPDATE','DELETE'];
 var resultados = ['EXITOSA','ERROR'];
 
+function loggear(tiempo_init,tiempo_end,operacion_index){
+
+  var tiempo_exec = tiempo_end - tiempo_init;
+  var log = '\n'+operacion[operacion_index];
+  log+='\n\ttiempo_inicio    => '+tiempo_init+' '+tiempo_init.getMilliseconds()
+  +'\n\ttiempo_fin       => '+tiempo_end+' '+tiempo_end.getMilliseconds()
+  +'\n\ttiempo_total (ms)=> '+(tiempo_end-tiempo_init);
+  sails.log.info(log);
+
+}
+
 module.exports = {
 
   create_libro: function (req, res) {
     //Crea libro, no se admiten ISBN repetidos
-    var log = '\n'+operacion[0];
     var tiempo_init = new Date;
    var params = req.allParams();
    Libro.create({
@@ -22,10 +32,8 @@ module.exports = {
      isbn: params.isbn
    }).exec(function (err, resultado) {
      var tiempo_end = new Date;
-     log+='\n\ttiempo_inicio    => '+tiempo_init+' '+tiempo_init.getMilliseconds()
-       +'\n\ttiempo_fin       => '+tiempo_end+' '+tiempo_end.getMilliseconds()
-       +'\n\ttiempo_total (ms)=> '+(tiempo_end-tiempo_init);
-     sails.log.info(log);
+     
+     loggear(tiempo_init,tiempo_end,0)
      if(err)
        return res.badRequest();
      else return res.json(resultado)
@@ -34,17 +42,14 @@ module.exports = {
 
   read_libro: function (req, res) {
     //Busca por titulo 'parecido'
-    var log = '\n'+operacion[1];
+   
     var tiempo_init = new Date;
     var params = req.allParams();
     Libro.find({
         titulo: {'contains': params.titulo}
     }).exec(function (err, resultado) {
       var tiempo_end = new Date;
-      log+='\n\ttiempo_inicio    => '+tiempo_init+' '+tiempo_init.getMilliseconds()
-           +'\n\ttiempo_fin       => '+tiempo_end+' '+tiempo_end.getMilliseconds()
-           +'\n\ttiempo_total (ms)=> '+(tiempo_end-tiempo_init);
-      sails.log.info(log);
+      loggear(tiempo_init,tiempo_end,1)
       if(err){
         return res.badRequest();
       }
@@ -56,7 +61,7 @@ module.exports = {
 
   update_libro: function (req, res) {
     //Modifica un libro por isbn
-    var log = '\n'+operacion[2];
+  
     var tiempo_init = new Date;
     var params = req.allParams();
     Libro.update({
@@ -67,10 +72,7 @@ module.exports = {
       editorial:params.editorial
     }).exec(function (err, resultado) {
       var tiempo_end = new Date;
-      log+='\n\ttiempo_inicio    => '+tiempo_init+' '+tiempo_init.getMilliseconds()
-        +'\n\ttiempo_fin       => '+tiempo_end+' '+tiempo_end.getMilliseconds()
-        +'\n\ttiempo_total (ms)=> '+(tiempo_end-tiempo_init);
-      sails.log.info(log);
+      loggear(tiempo_init,tiempo_end,2)
       if(err)
         return res.badRequest();
       else
@@ -80,17 +82,14 @@ module.exports = {
 
   delete_libro: function (req, res) {
     //Elimina un libro por isbn
-    var log = '\n'+operacion[3];
+   
     var tiempo_init = new Date;
     var params = req.allParams();
     Libro.destroy({
       isbn: params.isbn
     }).exec(function (err, resultado) {
       var tiempo_end = new Date;
-      log+='\n\ttiempo_inicio    => '+tiempo_init+' '+tiempo_init.getMilliseconds()
-        +'\n\ttiempo_fin       => '+tiempo_end+' '+tiempo_end.getMilliseconds()
-        +'\n\ttiempo_total (ms)=> '+(tiempo_end-tiempo_init);
-      sails.log.info(log);
+      loggear(tiempo_init,tiempo_end,3)
       if(err)
         return res.badRequest();
       else return res.json(resultado)
