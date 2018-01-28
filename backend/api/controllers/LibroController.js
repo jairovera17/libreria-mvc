@@ -11,16 +11,33 @@ var resultados = ['EXITOSA','ERROR'];
 const exec = require('child_process').exec;
 const fs = require('fs');
 
+/**
+ * csv estructure =
+ *  ip,operacion,argv,texec,cpu(%),disk-iostat(tps,kB_read,kB_wrtn/s),RAM(usado -m),Network (RX pakts,Tx Pakts)
+ * 
+ */
+
+function new_log(ip,operacion,argv,tiempo_init,tiempo_end){
+
+  var tiempo_diff = tiempo_end-tiempo_init;
+  var log = `${ip},${operacion},${argv},${tiempo_diff}`
+  var instrumentos = exec('sh final_script.sh',(error, stdout, stderr)=>{
+    fs.appendFile('instrumentos.csv',`${log},${stdout}\n`,
+  function(err){
+    if(err) throw err;
+    });
+  });  
+}
+
 function loggear(tiempo_init,tiempo_end,operacion_index){
 
   var tiempo_exec = tiempo_end - tiempo_init;
   var log = '\n'+operacion[operacion_index];
-  log+='\n\ttiempo_inicio    => '+tiempo_init+' '+tiempo_init.getMilliseconds()
-  +'\n\ttiempo_fin       => '+tiempo_end+' '+tiempo_end.getMilliseconds()
-  +'\n\ttiempo_total (ms)=> '+(tiempo_end-tiempo_init);
-  log+='\n';
-  var instrumentos = exec('free && uptime && df -h',(error, stdout, stderr)=>{
-    fs.appendFile('logs_data.log',`${log}
+
+
+
+  var instrumentos = exec('sh log_script.sh',(error, stdout, stderr)=>{
+    fs.appendFile('logs_data.csv',`${log}
     ${stdout}`, function(err){
       if(err) throw err;
     });
@@ -29,7 +46,28 @@ function loggear(tiempo_init,tiempo_end,operacion_index){
 
 module.exports = {
 
+
   create_libro: function (req, res) {
+    //Crea libro, no se admiten ISBN repetidos
+    var tiempo_init = new Date;
+   var params = req.allParams();
+   Libro.create({
+     titulo: params.titulo,
+     autor: params.autor,
+     editorial: params.editorial,
+     isbn: params.isbn
+   }).exec(function (err, resultado) {
+     var tiempo_end = new Date;
+     var argv = `titulo=${params.titulo}|autor=${params.autor}|editorial=${params.editorial}|isbn=${params.isbn}`
+     new_log(req.ip,operacion[0],argv,tiempo_init,tiempo_end)
+
+     if(err)
+       return res.badRequest();
+     else return res.json(resultado)
+   })
+  },
+
+/*  create_libro: function (req, res) {
     //Crea libro, no se admiten ISBN repetidos
     var tiempo_init = new Date;
    var params = req.allParams();
@@ -48,6 +86,8 @@ module.exports = {
    })
   },
 
+
+  */
   read_libro: function (req, res) {
     //Busca por titulo 'parecido'
    
@@ -57,7 +97,8 @@ module.exports = {
         titulo: {'contains': params.titulo}
     }).exec(function (err, resultado) {
       var tiempo_end = new Date;
-      loggear(tiempo_init,tiempo_end,1)
+      var argv = `titulo=${params.titulo}`
+      new_log(req.ip,operacion[1],argv,tiempo_init,tiempo_end)
       if(err){
         return res.badRequest();
       }
@@ -80,7 +121,8 @@ module.exports = {
       editorial:params.editorial
     }).exec(function (err, resultado) {
       var tiempo_end = new Date;
-      loggear(tiempo_init,tiempo_end,2)
+      var argv = `titulo=${params.titulo}|autor=${params.autor}|editorial=${params.editorial}|isbn=${params.isbn}`
+      new_log(req.ip,operacion[2],argv,tiempo_init,tiempo_end)
       if(err)
         return res.badRequest();
       else
@@ -89,15 +131,15 @@ module.exports = {
   },
 
   delete_libro: function (req, res) {
-    //Elimina un libro por isbn
-   
+    //Elimina un libro por isbn   
     var tiempo_init = new Date;
     var params = req.allParams();
     Libro.destroy({
       isbn: params.isbn
     }).exec(function (err, resultado) {
       var tiempo_end = new Date;
-      loggear(tiempo_init,tiempo_end,3)
+      var argv = `titulo=${params.titulo}|autor=${params.autor}|editorial=${params.editorial}|isbn=${params.isbn}`
+      new_log(req.ip,operacion[3],argv,tiempo_init,tiempo_end)
       if(err)
         return res.badRequest();
       else return res.json(resultado)

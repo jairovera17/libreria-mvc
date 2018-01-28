@@ -1,0 +1,8 @@
+::1,READ,titulo=meta,2,18,76,236,420,2264,53,53
+::1,READ,titulo=meta,2,14,76,236,420,2276,0,0
+::1,READ,titulo=meta,1,13,76,236,420,2290,0,1
+::1,READ,titulo=meta,1,18,76,236,420,2300,0,0
+::1,CREATE,titulo=meta|autor=jairo|editorial=eskeletra|isbn=1234-234,7,35,75,235,418,2278,69,44
+::1,CREATE,titulo=meta|autor=jairo|editorial=eskeletra|isbn=1234-234,4,21,76,231,418,2421,7048,4136
+::1,CREATE,titulo=meta|autor=jairo|editorial=eskeletra|isbn=1234-234,3,24,76,231,419,2429,524,270
+::1,READ,titulo=meta,5,34,76,230,419,2414,963,501
