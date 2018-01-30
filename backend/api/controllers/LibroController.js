@@ -67,27 +67,6 @@ module.exports = {
    })
   },
 
-/*  create_libro: function (req, res) {
-    //Crea libro, no se admiten ISBN repetidos
-    var tiempo_init = new Date;
-   var params = req.allParams();
-   Libro.create({
-     titulo: params.titulo,
-     autor: params.autor,
-     editorial: params.editorial,
-     isbn: params.isbn
-   }).exec(function (err, resultado) {
-     var tiempo_end = new Date;
-     
-     loggear(tiempo_init,tiempo_end,0)
-     if(err)
-       return res.badRequest();
-     else return res.json(resultado)
-   })
-  },
-
-
-  */
   read_libro: function (req, res) {
     //Busca por titulo 'parecido'
    
@@ -156,6 +135,16 @@ module.exports = {
         res.send(data);
       }
     });
+  },
+
+  clear_log: function(req,res){
+
+    fs.writeFile('instrumentos.csv',"ip,operacion,argv,texec,cpu(%),disk-tps,disk-kB_read,disk-kB_wrtn/s),RAM(M),network-Rx-Pakts,network-Tx-Pakts\n",
+    function(err){
+      if(err) throw err;
+      });
+
+      return res.send('log borrado')
   }
 
 };
