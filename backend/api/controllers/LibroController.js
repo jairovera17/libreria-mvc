@@ -138,13 +138,24 @@ module.exports = {
       isbn: params.isbn
     }).exec(function (err, resultado) {
       var tiempo_end = new Date;
-      var argv = `titulo=${params.titulo}|autor=${params.autor}|editorial=${params.editorial}|isbn=${params.isbn}`
+      var argv = `isbn=${params.isbn}`
       new_log(req.ip,operacion[3],argv,tiempo_init,tiempo_end)
       if(err)
         return res.badRequest();
       else return res.json(resultado)
     })
 
+  },
+
+  get_log: function(req,res){
+    fs.readFile('instrumentos.csv',function(err,data){
+      if (err){
+        res.send('error');
+      }
+      else {
+        res.send(data);
+      }
+    });
   }
 
 };
